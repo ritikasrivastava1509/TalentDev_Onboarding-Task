@@ -4,7 +4,9 @@
     entry: {
         home: "./Index.jsx",
         product: "./Component/Product.jsx",
-        customer: "./Component/Customer.jsx"
+        customer: "./Component/Customer.jsx",
+        store: "./Component/Store.jsx",
+        sale: "./Component/Sale.jsx"
     },
     output: {
         path: __dirname + "/dist",
@@ -18,10 +20,10 @@
             use: {
                 loader: 'babel-loader',
                 options: {
-                    presets: ['@babel/env','@babel/react']
+                    presets: ['@babel/env', '@babel/react']
                 }
             }
         }]
     }
-}
+};
 

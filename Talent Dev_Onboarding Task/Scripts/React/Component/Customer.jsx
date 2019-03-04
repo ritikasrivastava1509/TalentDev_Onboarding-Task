@@ -7,7 +7,8 @@ class Customer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            serviceList: []
+            serviceList: [],
+            isHidden: true
         };
 
         this.loadData = this.loadData.bind(this);
@@ -24,7 +25,7 @@ class Customer extends React.Component {
 
     loadData() {
         $.ajax({
-            url: '/Customers/GetCustomersDetails',
+            url: '/Customers/GetCustomerList',
             dataType: 'json',
             type: 'get',
             contentType: 'application/json',
@@ -42,18 +43,18 @@ class Customer extends React.Component {
 
     add(event) {
         // ajax call logic     
-        const formData = new FormData(event.target)
-        let dataJSON = {}
+        const formData = new FormData(event.target);
+        let dataJSON = {};
 
-        event.preventDefault()
+        event.preventDefault();
 
         for (let entry of formData.entries()) {
-            dataJSON[entry[0]] = entry[1]
+            dataJSON[entry[0]] = entry[1];
         }
 
-        console.log(dataJSON)
+        console.log(dataJSON);
 
-        fetch('/Customers/PostAddOneCustomer', {
+        fetch('/Customers/CreateCustomer', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -64,14 +65,14 @@ class Customer extends React.Component {
             response.json().then(data => {
                 console.log(data);
                 window.location.reload();
-            })
-        })
+            });
+        });
     }
 
     handleChange(e) {
         this.setState({
             [e.target.name]: e.target.value
-        })
+        });
     }
 
     update(id) {
@@ -80,10 +81,9 @@ class Customer extends React.Component {
             name: this.state.name,
             address: this.state.address,
             id: id
-        }
-
+        };
         $.ajax({
-            url: '/Customers/PostUpdateOneCustomer',
+            url: '/Customers/EditCustomerRecord',
             dataType: 'json',
             type: 'post',
             contentType: 'application/json',
@@ -92,24 +92,37 @@ class Customer extends React.Component {
             console.log(data);
             this.setState({
                 serviceList: data
-            })
+            });
 
         });
-
+        window.location.reload();
     }
 
     delete(id) {
+        var that = this;
         //ajax call logic
         $.ajax({
-            url: "/Customers/DeleteOneCustomer?customerId=" + id,
+            url: '/Customers/Delete',
             type: "POST",
             dataType: "JSON",
+            data: { 'id': id },
             success: function (response) {
-                NotificationManager.success('Success message', 'Title here');
-                window.location.reload(); // refresh the page
+
+                if (response.isExist === true) {
+                    
+
+                    that.setState({ isHidden: false });
+                    $("#btnDelete").prop('disabled', true);
+                }
+                else {
+                    that.setState({ isHidden: true });
+                    window.location.reload();
+                }
+               
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus, errorThrown);
+
             }
         });
     }
@@ -118,35 +131,42 @@ class Customer extends React.Component {
         let serviceList = this.state.serviceList;
         let tableData = null;
 
-        if (serviceList != "") {
+        if (serviceList !== "") {
             tableData = serviceList.map(service =>
-                <Table.Row key={service.Id}>
+                <Table.Row key={service.ID}>
                     <Table.Cell >{service.Name}</Table.Cell>
                     <Table.Cell >{service.Address}</Table.Cell>
                     <Table.Cell >
                         <Modal id="modal" trigger={<Button color="yellow" ><Icon name="edit" />Edit</Button>}  >
                             <Modal.Header >Details customer</Modal.Header>
                             <Modal.Content>
-                                <Form ref="form" method="POST" onSubmit={this.update.bind(this, service.Id)}>
+                                <Form ref="form" method="POST" onSubmit={this.update.bind(this, service.ID)}>
                                     <Form.Field>
                                         <label>Name</label><br />
-                                        <input type="text" placeholder="Type a name" name="name" placeholder={service.Name}
-                                            onChange={this.handleChange} required minlength="3" maxlength="20" /><br />
+                                        <input type="text" name="name" required onChange={this.handleChange} defaultValue={service.Name} /><br />
                                     </Form.Field>
                                     <Form.Field>
                                         <label>Address</label><br />
-                                        <input placeholder="Type an address" name="address" placeholder={service.Address} onChange={this.handleChange} required /><br />
+                                        <input name="address" required onChange={this.handleChange} defaultValue={service.Address} /> <br />
+
                                     </Form.Field>
-                                    <Button type='submit'><Icon name="save" />save</Button>
+                                    <Button type='submit'><Button color="green"><Icon name="save" />save</Button></Button>
                                 </Form>
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
                     <Table.Cell>
-                        <Button color="red" onClick={this.delete.bind(this, service.Id)}><Icon name="trash" />Delete</Button>
+                        <Modal id="deleteModal" onClose={this.props.onClose} trigger={<Button color="red" onClick={() => this.setState({ isHidden: true })}><Icon name="trash" />Delete</Button>}>
+                            <Modal.Header>Delete Customer</Modal.Header>
+                            <Modal.Content>
+                                {this.state.isHidden && <Label>Are you sure, you want to delete?</Label>}
+                                {!this.state.isHidden && <Label >Sorry!you can not delete this Customer</Label>}
+                                <Button id="btnDelete" onClick={this.delete.bind(this, service.ID)} color="red"><Icon name="trash" />Delete</Button>
+                            </Modal.Content>
+                        </Modal>
                     </Table.Cell>
                 </Table.Row>
-            )
+            );
         }
         return (
             <React.Fragment>
@@ -165,11 +185,10 @@ class Customer extends React.Component {
                                     <label>Address</label><br />
                                     <input placeholder="Type an address" name="address" required /><br />
                                 </Form.Field>
-                                <Button type='submit'><Icon name="save" />save</Button>
+                                <Button type='submit'><Button color="green"><Icon name="save" />save</Button></Button>
                             </Form>
                         </Modal.Content>
                     </Modal>
-
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
@@ -182,11 +201,8 @@ class Customer extends React.Component {
                         <Table.Body>
                             {tableData}
                         </Table.Body>
-                        <Table.Footer>
-                        </Table.Footer>
                     </Table>
                 </div>
-                <div id="loading"><img id="loading-image" src="/images/ajax-loader.gif" /></div>
             </React.Fragment>
         );
     }

@@ -81,8 +81,7 @@ class Product extends React.Component {
                 [e.target.name]: convert
             });
         }
-        else {
-            (e.target.name === "name"); 
+        if (e.target.name === "name"); {
             this.setState({
                 [e.target.name]: e.target.value
             });
@@ -169,8 +168,7 @@ class Product extends React.Component {
                                         <input type="number" step="0.1" name="price" min="0" onChange={this.handleChange} required defaultValue={service.Price} /><br />
                                     </Form.Field>
                                     <Button type='submit'><Button color="green"><Icon name="save" />save</Button></Button>
-                                    
-                                        </Form>
+                                     </Form>
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
@@ -202,7 +200,7 @@ class Product extends React.Component {
                                     <label>Price</label><br />
                                     <input type="number" step="0.1" min="0" placeholder="Type an price" name="price" /><br />
                                 </Form.Field>
-                                <Button type='submit'><Icon name="save" required />save</Button>
+                                <Button type='submit'><Button color="green"><Icon name="save" required />save</Button></Button>
                             </Form>
                         </Modal.Content>
                     </Modal>

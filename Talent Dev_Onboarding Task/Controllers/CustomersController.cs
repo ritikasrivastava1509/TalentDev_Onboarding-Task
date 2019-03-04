@@ -17,105 +17,90 @@ namespace Talent_Dev_Onboarding_Task.Controllers
         // GET: Customers
         public ActionResult Index()
         {
-            return View(db.Customers.ToList());
+            return View("");
+        }
+        // Get: Customer list to display on the landing page
+        public JsonResult GetCustomerList()
+        {
+
+            List<CustomerModel> customerModel = db.Customers.Select(x => new CustomerModel
+            {
+                ID = x.ID,
+                Name = x.Name,
+                Address = x.Address
+            }).ToList();
+            return Json(customerModel, JsonRequestBehavior.AllowGet);
+        }
+        // Save data in the Customer database
+        public JsonResult CreateCustomer(CustomerModel customerModel)
+        {
+
+            Customer customer = new Customer();
+            customer.Name = customerModel.Name;
+            customer.Address = customerModel.Address;
+            db.Customers.Add(customer);
+            db.SaveChanges();
+            return Json(customerModel, JsonRequestBehavior.AllowGet);
         }
 
-        // GET: Customers/Details/5
-        public ActionResult Details(int? id)
+        // Get  for Customer editing
+        public JsonResult GetCustomerRecord(int id)
         {
-            if (id == null)
+            var customerModel = db.Customers.Where(x => x.ID == id).Select(y => new CustomerModel
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Customer customer = db.Customers.Find(id);
+                ID = y.ID,
+                Name = y.Name,
+                Address = y.Address
+            }).FirstOrDefault();
+
+            return Json(customerModel, JsonRequestBehavior.AllowGet);
+        }
+
+        // Save the edited Customer in the database
+        public JsonResult EditCustomerRecord([Bind(Include = "ID,Name,Address")] CustomerModel customerModel)
+        {
+            var cust = db.Customers.Find(customerModel.ID);
+            cust.Name = customerModel.Name;
+            cust.Address = customerModel.Address;
+            db.SaveChanges();
+            return Json(customerModel, JsonRequestBehavior.AllowGet);
+        }
+        // GET:  Customer/Delete/5
+        public JsonResult Delete(CustomerModel customerModel)
+        {
+
+            var customer = db.Customers.Find(customerModel.ID);
             if (customer == null)
             {
-                return HttpNotFound();
+                return Json("Not found", JsonRequestBehavior.AllowGet);
             }
-            return View(customer);
-        }
-
-        // GET: Customers/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Customers/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Name,Address")] Customer customer)
-        {
-            if (ModelState.IsValid)
+            var isExist = customer.ProductSolds.Any();
+            if (!isExist)
             {
-                db.Customers.Add(customer);
+                db.Customers.Remove(customer);
                 db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+                isExist = false;
 
-            return View(customer);
+            }
+            List<CustomerModel> customerModel1 = db.Customers.Select(x => new CustomerModel
+            {
+                ID = x.ID,
+                Name = x.Name,
+                Address = x.Address
+            }).ToList();
+
+            return Json(new { customerModel = customerModel1, isExist = isExist }, JsonRequestBehavior.AllowGet);
         }
-
-        // GET: Customers/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
-            {
-                return HttpNotFound();
-            }
-            return View(customer);
-        }
-
-        // POST: Customers/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Name,Address")] Customer customer)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(customer).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(customer);
-        }
-
-        // GET: Customers/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
-            {
-                return HttpNotFound();
-            }
-            return View(customer);
-        }
-
         // POST: Customers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public JsonResult DeleteConfirmed([Bind(Include ="ID")] CustomerModel customerModel)
         {
-            Customer customer = db.Customers.Find(id);
+            Customer customer = db.Customers.Find(customerModel.ID);
+
             db.Customers.Remove(customer);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return Json(customerModel, JsonRequestBehavior.AllowGet);
         }
-
-        protected override void Dispose(bool disposing)
+ protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -123,5 +108,6 @@ namespace Talent_Dev_Onboarding_Task.Controllers
             }
             base.Dispose(disposing);
         }
-    }
+    
+}
 }

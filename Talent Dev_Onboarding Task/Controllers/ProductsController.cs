@@ -39,6 +39,7 @@ namespace Talent_Dev_Onboarding_Task.Controllers
         {
 
             Product product = new Product();
+            
             product.Name = productModel.Name;
             product.Price = productModel.Price;
             db.Products.Add(product);
