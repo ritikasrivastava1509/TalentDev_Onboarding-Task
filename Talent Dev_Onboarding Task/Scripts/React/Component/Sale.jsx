@@ -46,13 +46,13 @@ class Sale extends React.Component {
         
         fetch('/Sales/GetSalesList').then(response => { // dropdowns
             response.json().then(data => {
-
+                
                 this.setState({
                     saleList: data,
                     serviceList: data,
-                    customersList: data[0],
-                    productsList: data[1],
-                    storesList: data[2]
+                    customersList: data[0].CustomerName,
+                    productsList: data[1].ProductName,
+                    storesList: data[2].StoreName
                 });
             });
         });
@@ -164,10 +164,10 @@ class Sale extends React.Component {
 
     // dynamic list to fill up the dropdown 
     fillDropdown(list) {
-
+       
         let result = [];
         for (var key in list) {
-            result.push({ key: list[key]["ID"], text: list[key]["Name"], value: list[key]["Name"] });
+            result.push({ key: list[key]["ID"], value: list[key]["Name"] });
         }
         return result;
     }

@@ -26,9 +26,7 @@ namespace Talent_Dev_Onboarding_Task.Models
         [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DateSold { get; set; }
 
-        public Customer Customer { get; set; }
-        public Product Product { get; set; }
-        public Store Store { get; set; }
+        
         public string ProductName { get; internal set; }
         public string StoreName { get; internal set; }
         public string CustomerName { get; internal set; }
