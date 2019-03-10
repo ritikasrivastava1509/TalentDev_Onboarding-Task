@@ -9,8 +9,8 @@ import Sale from "./Component/Sale.jsx";
 
 ReactDOM.render(
     <Home/>,
-    <Product />,
-    <Customer />,
+    <Product/>,
+    <Customer/>,
     <Store />,
     < Sale />,
     document.getElementById("products"),

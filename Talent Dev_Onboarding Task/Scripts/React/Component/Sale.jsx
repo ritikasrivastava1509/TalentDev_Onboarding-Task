@@ -1,8 +1,9 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Modal, Header, Image, Container, Divider, Grid, Menu, Segment, Icon, Popup, Form, Table, Label, Dropdown } from 'semantic-ui-react';
+import { Button, Modal,Icon, Popup, Form, Table, Label, Dropdown } from 'semantic-ui-react';
 import $ from 'jquery';
 import moment from 'moment';
+
 
 {/* Model class customer */ }
 class Sale extends React.Component {
@@ -10,7 +11,10 @@ class Sale extends React.Component {
         super(props);
         this.state = {
             serviceList: [],
-            saleList: []
+            saleList: [],
+            customersList: [],
+            productsList: [],
+            storesList:[]
         };
 
         this.loadData = this.loadData.bind(this);
@@ -28,27 +32,29 @@ class Sale extends React.Component {
 
     componentDidMount() {
         this.loadData();
+    }
 
-        // date sets today
+    loadData() {
+        //ajax call logic
+
         const day = new Date().getDay() + 1;
         const month = new Date().getMonth() + 1;
         const year = new Date().getFullYear();
         this.setState({
             curTime: day + '-' + month + '-' + year
         });
-    }
-
-    loadData() {
-        //ajax call logic
+        
         fetch('/Sales/GetSalesList').then(response => { // dropdowns
             response.json().then(data => {
+
                 this.setState({
+                    saleList: data,
                     serviceList: data,
                     customersList: data[0],
                     productsList: data[1],
-                    storesList: data[2],
+                    storesList: data[2]
                 });
-            })
+            });
         });
 
         $.ajax({
@@ -56,14 +62,16 @@ class Sale extends React.Component {
             dataType: 'json',
             type: 'get',
             contentType: 'application/json',
+            processData: false,
             beforeSend: function () { // loading...
-                $('#loading').show();
+
             }
         }).done((data) => {
-            $('#loading').hide();
+
             this.setState({
-                saleList: data,
+                saleList: data
             });
+           
         });
     }
 
@@ -156,25 +164,25 @@ class Sale extends React.Component {
 
     // dynamic list to fill up the dropdown 
     fillDropdown(list) {
-        
+
         let result = [];
         for (var key in list) {
-            result.push({ key: list[key]["ID"], text: list[key]["Name"], value: list[key]["Name"] })
+            result.push({ key: list[key]["ID"], text: list[key]["Name"], value: list[key]["Name"] });
         }
         return result;
     }
 
     render() {
-
-        let serviceList = this.state.serviceList;
+        
         let saleList = this.state.saleList;
-
+        let serviceList = this.state.serviceList;
         let tableData = null;
         let add_sale = null; // modal to add a sale
-
+        
+        //alert(this.state.saleList);
         if (serviceList !== "") {
             const { name, value, key } = this.state; // set the value which would be selected into the dropdown
-
+            
             add_sale = <Modal id="modal" trigger={<Button color="blue" id="buttonModal">Add a new sale record</Button>}  >
                 <Modal.Header >Add a new sale</Modal.Header>
                 <Modal.Content>
@@ -200,13 +208,16 @@ class Sale extends React.Component {
                 </Modal.Content>
             </Modal>
         }
+
         // the table display all sale records
-        if (saleList !== "") {
+        if (this.state.saleList !== "") {
+           
             tableData = saleList.map(service =>
                 <Table.Row key={service.ID}>
-                    <Table.Cell >{service.Customer.Name}</Table.Cell>
-                    <Table.Cell >{service.Product.Name}</Table.Cell>
-                    <Table.Cell >{service.Store.Name}</Table.Cell>
+                    <Table.Cell >{service.CustomerName}</Table.Cell>
+
+                    <Table.Cell >{service.ProductName}</Table.Cell>
+                    <Table.Cell >{service.StoreName}</Table.Cell>
                     <Table.Cell >{moment(service.DateSold).format("DD/MM/YYYY")}</Table.Cell>
                     <Table.Cell >
                         <Modal id="modal" trigger={<Button color="yellow"><Icon name="edit" />Edit</Button>}  >
@@ -215,15 +226,15 @@ class Sale extends React.Component {
                                 <Form ref="form" method="POST" onSubmit={this.update.bind(this, service.ID)}>
                                     <Form.Field>
                                         <label>Customer name</label><br />
-                                        <Dropdown selection options={this.fillDropdown(this.state.customersList)} onChange={this.handleChange} name="selectCustomer" placeholder={service.Customer.Name} /><br />
+                                        <Dropdown selection options={this.fillDropdown(this.state.customersList)} required onChange={this.handleChange} name="selectCustomer" defaultValue={service.CustomerName} /><br />
                                     </Form.Field>
                                     <Form.Field>
                                         <label>Product name</label><br />
-                                        <Dropdown selection options={this.fillDropdown(this.state.productsList)} onChange={this.handleChange} name="selectProduct" placeholder={service.Product.Name} /><br />
+                                        <Dropdown selection options={this.fillDropdown(this.state.productsList)}  required onChange={this.handleChange} name="selectProduct" defaultValue={service.ProductName} /><br />
                                     </Form.Field>
                                     <Form.Field>
                                         <label>Store name</label><br />
-                                        <Dropdown selection options={this.fillDropdown(this.state.storesList)} onChange={this.handleChange} name="selectStore" placeholder={service.Store.Name} /><br />
+                                        <Dropdown selection options={this.fillDropdown(this.state.storesList)}  required onChange={this.handleChange} name="selectStore" defaultValue={service.StoreName} /><br />
                                     </Form.Field>
                                     <Form.Field>
                                         <label>Date sold</label><br />
@@ -258,10 +269,10 @@ class Sale extends React.Component {
                         <Table.Body>
                             {tableData}
                         </Table.Body>
-                        
+
                     </Table>
                 </div>
-                
+
             </React.Fragment>
         );
     }

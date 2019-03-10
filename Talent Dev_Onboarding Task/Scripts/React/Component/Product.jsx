@@ -138,8 +138,7 @@ class Product extends React.Component {
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus, errorThrown);
-                
-            }
+                 }
         });
         //window.location.reload();
     }

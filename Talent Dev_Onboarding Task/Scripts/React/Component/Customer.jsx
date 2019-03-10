@@ -34,6 +34,7 @@ class Customer extends React.Component {
                 $('#loading').show();
             }
         }).done((data) => {
+            
             $('#loading').hide();
             this.setState({
                 serviceList: data
