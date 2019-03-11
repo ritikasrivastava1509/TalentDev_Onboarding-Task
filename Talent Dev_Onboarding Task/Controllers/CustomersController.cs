@@ -13,13 +13,12 @@ namespace Talent_Dev_Onboarding_Task.Controllers
     public class CustomersController : Controller
     {
         private MVCEntities db = new MVCEntities();
-
-        // GET: Customers
+ // GET: Customers
         public ActionResult Index()
         {
             return View("");
         }
-        // Get: Customer list to display on the landing page
+ // Get: Customer list to display on the landing page
         public JsonResult GetCustomerList()
         {
 
@@ -31,7 +30,7 @@ namespace Talent_Dev_Onboarding_Task.Controllers
             }).ToList();
             return Json(customerModel, JsonRequestBehavior.AllowGet);
         }
-        // Save data in the Customer database
+ // Save data in the Customer database
         public JsonResult CreateCustomer(CustomerModel customerModel)
         {
 

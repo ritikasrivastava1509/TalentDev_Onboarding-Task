@@ -23,6 +23,7 @@ class Customer extends React.Component {
         this.loadData();
     }
 
+ //// for binding all tha table details using Ajax call logic
     loadData() {
         $.ajax({
             url: '/Customers/GetCustomerList',
@@ -34,7 +35,7 @@ class Customer extends React.Component {
                 $('#loading').show();
             }
         }).done((data) => {
-            
+
             $('#loading').hide();
             this.setState({
                 serviceList: data
@@ -42,9 +43,9 @@ class Customer extends React.Component {
         });
     }
 
+ //Add event functionalities performed by Ajax call logic
     add(event) {
-        // ajax call logic     
-        const formData = new FormData(event.target);
+          const formData = new FormData(event.target);
         let dataJSON = {};
 
         event.preventDefault();
@@ -52,10 +53,8 @@ class Customer extends React.Component {
         for (let entry of formData.entries()) {
             dataJSON[entry[0]] = entry[1];
         }
-
-        console.log(dataJSON);
-
-        fetch('/Customers/CreateCustomer', {
+ console.log(dataJSON);
+fetch('/Customers/CreateCustomer', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -69,15 +68,16 @@ class Customer extends React.Component {
             });
         });
     }
-
-    handleChange(e) {
+//Handle Change Event to Set th Values into States
+ handleChange(e) {
         this.setState({
             [e.target.name]: e.target.value
         });
     }
 
+    //Edit or Update functionalities performed by Ajax call logic
     update(id) {
-        //ajax call logic
+
         var data = {
             name: this.state.name,
             address: this.state.address,
@@ -99,9 +99,9 @@ class Customer extends React.Component {
         window.location.reload();
     }
 
+    //Delete functionalities performed by Ajax call logic
     delete(id) {
         var that = this;
-        //ajax call logic
         $.ajax({
             url: '/Customers/Delete',
             type: "POST",
@@ -110,7 +110,7 @@ class Customer extends React.Component {
             success: function (response) {
 
                 if (response.isExist === true) {
-                    
+
 
                     that.setState({ isHidden: false });
                     $("#btnDelete").prop('disabled', true);
@@ -119,7 +119,7 @@ class Customer extends React.Component {
                     that.setState({ isHidden: true });
                     window.location.reload();
                 }
-               
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus, errorThrown);
@@ -131,31 +131,31 @@ class Customer extends React.Component {
     render() {
         let serviceList = this.state.serviceList;
         let tableData = null;
-
         if (serviceList !== "") {
             tableData = serviceList.map(service =>
                 <Table.Row key={service.ID}>
                     <Table.Cell >{service.Name}</Table.Cell>
                     <Table.Cell >{service.Address}</Table.Cell>
+//Edit Modal using Semantic UI
                     <Table.Cell >
                         <Modal id="modal" trigger={<Button color="yellow" ><Icon name="edit" />Edit</Button>}  >
-                            <Modal.Header >Details customer</Modal.Header>
+                            <Modal.Header class="uiHeader" >Details customer</Modal.Header>
                             <Modal.Content>
                                 <Form ref="form" method="POST" onSubmit={this.update.bind(this, service.ID)}>
                                     <Form.Field>
-                                        <label>Name</label><br />
+                                        <Label color="grey">Name</Label><br />
                                         <input type="text" name="name" required onChange={this.handleChange} defaultValue={service.Name} /><br />
                                     </Form.Field>
                                     <Form.Field>
-                                        <label>Address</label><br />
+                                        <Label color="grey">Address</Label><br />
                                         <input name="address" required onChange={this.handleChange} defaultValue={service.Address} /> <br />
-
                                     </Form.Field>
                                     <Button type='submit'><Button color="green"><Icon name="save" />save</Button></Button>
                                 </Form>
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
+ //Delete Modal using Semantic UI
                     <Table.Cell>
                         <Modal id="deleteModal" onClose={this.props.onClose} trigger={<Button color="red" onClick={() => this.setState({ isHidden: true })}><Icon name="trash" />Delete</Button>}>
                             <Modal.Header>Delete Customer</Modal.Header>
@@ -169,6 +169,7 @@ class Customer extends React.Component {
                 </Table.Row>
             );
         }
+// Add Modal using Semantic UI
         return (
             <React.Fragment>
                 <div>
@@ -178,18 +179,19 @@ class Customer extends React.Component {
                         <Modal.Content>
                             <Form onSubmit={this.add} ref="form" method="POST">
                                 <Form.Field>
-                                    <label>Name</label><br />
+                                    <Label color='grey'>Name</Label><br />
                                     <input type="text" placeholder="Type a name" name="name" required
                                         minlength="3" maxlength="20" /><br />
                                 </Form.Field>
                                 <Form.Field>
-                                    <label>Address</label><br />
+                                    <Label color='grey'>Address</Label><br />
                                     <input placeholder="Type an address" name="address" required /><br />
                                 </Form.Field>
                                 <Button type='submit'><Button color="green"><Icon name="save" />save</Button></Button>
                             </Form>
                         </Modal.Content>
                     </Modal>
+ //Table details Modal using Semantic UI
                     <Table celled>
                         <Table.Header>
                             <Table.Row>

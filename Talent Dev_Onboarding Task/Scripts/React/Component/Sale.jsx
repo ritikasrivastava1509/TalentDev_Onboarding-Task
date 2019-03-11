@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Modal, Icon, Popup, Form, Table, Label, Dropdown } from 'semantic-ui-react';
+import { Button, Modal, Icon, Form, Table, Label, Dropdown } from 'semantic-ui-react';
 import $ from 'jquery';
 import moment from 'moment';
 
@@ -22,8 +22,7 @@ class Sale extends React.Component {
         };
 
         this.loadData = this.loadData.bind(this);
-
-        // CRUD
+ // CRUD
         this.add = this.add.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
@@ -42,7 +41,7 @@ class Sale extends React.Component {
     }
 
     loadData() {
-        //ajax call logic
+  //for binding all tha table details using Ajax call logic
 
         const day = new Date().getDay() + 1;
         const month = new Date().getMonth() + 1;
@@ -82,11 +81,10 @@ class Sale extends React.Component {
 
         });
     }
-
+// Add New Sales (ajax call logic) 
     add(e) {
         e.preventDefault();
-
-        // ajax call logic     
+     
         $.ajax({
             url: "/Sales/CreateSales",
             type: "POST",
@@ -108,17 +106,16 @@ class Sale extends React.Component {
         });
     }
 
+//Handle Change Event to Set th Values into States
     handleChangeUpdate(e) {
         this.setState({
             [e.target.name]: e.target.value
-        })
+        });
     }
 
+ //Edit or Update functionalities performed by Ajax call logic
     update(id) {
-       
-        
-        //ajax call logic
-        let convert = moment(this.state.newDate).format("DD-MM-YYYY") // by default was MM-DD-YYYY
+       let convert = moment(this.state.newDate).format("DD-MM-YYYY") // by default was MM-DD-YYYY
 
         let data = {
             customerID: this.state.selectUCustomer[0].key,
@@ -142,18 +139,18 @@ class Sale extends React.Component {
             });
         window.location.reload();
     }
-
+//Edit or Update functionalities performed by Ajax call logic
     delete(id) {
-        //ajax call logic
         $.ajax({
-            url: "/Sales/DeleteOneSale?saleId=" + id,
+            url: '/Sales/DeleteConfirmed',
             type: "POST",
             dataType: "JSON",
+            data: { 'id': id },
             success: function (response) {
-                window.location.reload()
+                window.location.reload();
             },
             error: function (error) {
-                alert(error)
+                alert(error);
             }
         });
     }
@@ -174,7 +171,7 @@ class Sale extends React.Component {
         this.setState({ [e.target.value]: e.target.value });
 
     }
-    /*dynamic list to fill up the dropdow*/
+ /*dynamic list to fill up the dropdow*/
     fillCustomerDropdown(list) {
 
 
@@ -203,53 +200,48 @@ class Sale extends React.Component {
         return result;
     }
     fillDropdown(list) {
-
-
-        let result = [];
+ let result = [];
         for (var key in list) {
             result.push({ key: list[key]["ID"], value: list[key]["Name"] });
         }
         return result;
     }
-
-    render() {
+ render() {
 
         let saleList = this.state.saleList;
         let serviceList = this.state.serviceList;
         let tableData = null;
-        let add_sale = null; // modal to add a sale
-
-        //alert(this.state.saleList);
-        if (serviceList !== "") {
-            const { name, value, key } = this.state; // set the value which would be selected into the dropdown
+        let add_sale = null;
+ if (serviceList !== "") {
+     const { name, value, key } = this.state; // set the value which would be selected into the dropdown
+// Add Modal using Semantic UI
 
             add_sale = <Modal id="modal" trigger={<Button color="blue" id="buttonModal">Add a new sale record</Button>}  >
                 <Modal.Header >Add a new sale</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={this.add.bind(this)} ref="form" method="POST">
                         <Form.Field>
-                            <Label>Customer Name</Label><br />
+                            <Label color='grey'>Customer Name</Label><br />
                             <Dropdown selection options={this.fillCustomerDropdown(this.state.customersList)} onChange={this.handleChange} name="selectCustomer" placeholder='Select Customer' /><br />
                         </Form.Field>
                         <Form.Field>
-                            <Label>Product Name</Label><br />
+                            <Label color='grey'>Product Name</Label><br />
                             <Dropdown selection options={this.fillProductDropdown(this.state.productsList)} onChange={this.handleChange} name="selectProduct" placeholder='Select Product' /><br />
                         </Form.Field>
                         <Form.Field>
-                            <Label>Store Name</Label><br />
+                            <Label color='grey'>Store Name</Label><br />
                             <Dropdown selection options={this.fillStoreDropdown(this.state.storesList)} onChange={this.handleChange} name="selectStore" placeholder='Select Store' /><br />
                         </Form.Field>
                         <Form.Field>
-                            <Label>Date</Label><br />
+                            <Label color='grey'>Date</Label><br />
                             <input type="date" onChange={this.handleDate} name="selectDate" min={this.state.curTime} required /><br />
                         </Form.Field>
-                        <Button type='submit'><Icon name="save" />save</Button>
+                        <Button type='submit'><Button color="green"><Icon name="save" />save</Button></Button>
                     </Form>
                 </Modal.Content>
             </Modal>
         }
-
-        // the table display all sale records
+ // Edit Modal using Semantic UI
         if (this.state.saleList !== "") {
 
             tableData = saleList.map(service =>
@@ -264,32 +256,40 @@ class Sale extends React.Component {
                             <Modal.Content>
                                 <Form ref="form" method="POST" onSubmit={this.update.bind(this, service.ID)}>
                                     <Form.Field>
-                                        <Label>Customer Name</Label><br />
+                                        <Label  color='grey'> Customer Name</Label><br />
                                         <Dropdown selection options={this.fillCustomerDropdown(this.state.customersList)} defaultValue={service.CustomerName} required onChange={this.handleChange} name="selectUCustomer"  /><br />
                                     </Form.Field>
                                     <Form.Field>
-                                        <Label>Product Name</Label><br />
+                                        <Label color='grey'>Product Name</Label><br />
                                         <Dropdown selection options={this.fillProductDropdown(this.state.productsList)} defaultValue={service.ProductName} required onChange={this.handleChange} name="selectUProduct"  /><br />
                                     </Form.Field>
                                     <Form.Field>
-                                        <Label>Store Name</Label><br />
+                                        <Label color='grey'>Store Name</Label><br />
                                         <Dropdown selection options={this.fillStoreDropdown(this.state.storesList)} defaultValue={service.StoreName} required onChange={this.handleChange} name="selectUStore" /><br />
                                     </Form.Field>
                                     <Form.Field>
-                                        <label>Date Sold</label><br />
+                                        <label color='grey'>Date Sold</label><br />
                                         <input type="date" name="newDate" value={moment(service.DateSold).format("YYYY-MM-DD")} required onChange={this.handleDate} /><br />
                                     </Form.Field>
-                                    <Button type='submit'><Icon name="save" />save</Button>
+                                    <Button type='submit'> <Button color="green"><Icon name="save" />save</Button></Button>
                                 </Form>
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
+//Delete Modal using Semantic UI
                     <Table.Cell>
-                        <Button color="red" onClick={this.delete.bind(this, service.ID)}><Icon name="trash" />Delete</Button>
+                        <Modal id="deleteModal" onClose={this.props.onClose} trigger={<Button color="red" onClick={() => this.delete.bind(this, service.ID)}><Icon name="trash" />Delete</Button>}>
+                            <Modal.Header>Delete Sales</Modal.Header>
+                            <Modal.Content>
+                               <Label>Are you sure, you want to delete?</Label>
+                                <Button id="btnDelete" onClick={this.delete.bind(this, service.ID)} color="red"><Icon name="trash" />Delete</Button>
+                            </Modal.Content>
+                        </Modal>
                     </Table.Cell>
                 </Table.Row>
             );
         }
+ //Table to show All Sales Record using Semantic UI
         return (
             <React.Fragment>
                 <div>

@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Modal, Header, Image, Container, Divider, Grid, Menu, Segment, Icon, Popup, Form, Table, Label } from 'semantic-ui-react';
+import { Button, Modal,  Icon,  Form, Table, Label } from 'semantic-ui-react';
 import $ from 'jquery';
 
 {/* Model class store */ }
@@ -25,7 +25,7 @@ class Store extends React.Component {
     }
 
     loadData() {
-        //ajax call logic
+ // For binding all tha table details using Ajax call logic     
         $.ajax({
             url: '/Stores/GetStoreList',
             dataType: 'json',
@@ -43,8 +43,9 @@ class Store extends React.Component {
         });
     }
 
+ //Add event functionalities performed by Ajax call logic
     add(event) {
-        // ajax call logic     
+           
         const formData = new FormData(event.target)
         let dataJSON = {};
 
@@ -67,18 +68,19 @@ class Store extends React.Component {
             response.json().then(data => {
                 console.log(data);
                 window.location.reload();
-            })
-        })
+            });
+        });
     }
-
+//
+//Handle Change Event to Set th Values into StatesS
     handleChange(e) {
         this.setState({
             [e.target.name]: e.target.value
         });
     }
-
+ //Edit or Update functionalities performed by Ajax call logic
     update(id) {
-        //ajax call logic
+       
         var data = {
             name: this.state.name,
             address: this.state.address,
@@ -100,10 +102,9 @@ class Store extends React.Component {
             });
         window.location.reload();
  }
-
+//Delate functionalities with Ajax call logic
     delete(id) {
         var that = this;
-        //ajax call logic
         $.ajax({
             url: '/Stores/Delete',
             type: "POST",
@@ -139,23 +140,25 @@ class Store extends React.Component {
                     <Table.Cell >{service.Name}</Table.Cell>
                     <Table.Cell >{service.Address}</Table.Cell>
                     <Table.Cell >
+   //Edit Modal using Semantic UI
                         <Modal id="modal" trigger={<Button color="yellow" ><Icon name="edit" />Edit</Button>}  >
                             <Modal.Header >Details store</Modal.Header>
                             <Modal.Content>
                                 <Form ref="form" method="POST" onSubmit={this.update.bind(this, service.ID)}>
                                     <Form.Field>
-                                        <label>Name</label><br />
+                                        <Label color="grey">Name</Label><br />
                                         <input type="text" name="name" required onChange={this.handleChange} defaultValue={service.Name} /><br />
                                     </Form.Field>
                                     <Form.Field>
-                                        <label>Address</label><br />
+                                        <Label color="grey">Address</Label><br />
                                         <input name="address" required onChange={this.handleChange} defaultValue={service.Address} /> <br />
                                     </Form.Field>
-                                    <Button type='submit'><Icon name="save" />save</Button>
+                                    <Button type='submit'><Button color="green"><Icon name="save" />save</Button></Button>
                                 </Form>
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
+  //Delete Modal using Sematic UI
                     <Table.Cell>
                         <Modal id="deleteModal" onClose={this.props.onClose} trigger={<Button color="red" onClick={() => this.setState({ isHidden: true })}><Icon name="trash" />Delete</Button>}>
                             <Modal.Header>Delete Store</Modal.Header>
@@ -168,7 +171,8 @@ class Store extends React.Component {
                     </Table.Cell>
                 </Table.Row>
             );
-        }
+     }
+  //Add Modal
         return (
             <React.Fragment>
                 <div>
@@ -177,17 +181,18 @@ class Store extends React.Component {
                         <Modal.Content>
                             <Form onSubmit={this.add} ref="form" method="POST">
                                 <Form.Field>
-                                    <label>Name</label><br />
+                                    <Label color="grey">Name</Label><br />
                                     <input type="text" placeholder="Type a name for the store" name="name" required minlength="3" maxlength="20" /><br />
                                 </Form.Field>
                                 <Form.Field>
-                                    <label>Address</label><br />
+                                    <Label color="grey">Address</Label><br />
                                     <input placeholder="Type an address" name="address" /><br />
                                 </Form.Field>
-                                <Button type='submit'><Icon name="save" required />save</Button>
+                                <Button type='submit'><Button color="green"><Icon name="save" required />save</Button></Button>
                             </Form>
                         </Modal.Content>
                     </Modal>
+    //Table Detalis
                     <Table celled>
                         <Table.Header>
                             <Table.Row>

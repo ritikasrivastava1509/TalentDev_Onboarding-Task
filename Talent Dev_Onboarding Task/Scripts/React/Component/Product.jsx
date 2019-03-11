@@ -23,9 +23,8 @@ class Product extends React.Component {
         this.loadData();
 
     }
-
-    loadData() {
-        //ajax call logic
+loadData() {
+ // For binding all tha table details using Ajax call logic
         $.ajax({
             url: '/Products/GetProductList',
             dataType: 'json',
@@ -45,9 +44,9 @@ class Product extends React.Component {
             });
         });
     }
-
+// Add New Product (ajax call logic) 
     add(event) {
-        // ajax call logic     
+        
         const formData = new FormData(event.target);
         let dataJSON = {};
 
@@ -71,7 +70,7 @@ class Product extends React.Component {
             });
         });
     }
-
+    // Handle change and set the values in state
 
     handleChange(e) {
         let convert = "";
@@ -87,11 +86,9 @@ class Product extends React.Component {
             });
         }
     }
-
+ //Edit or Update event performed by Ajax call logic
     update(id) {
-        //alert(this.state);
-        //ajax call logic
-        let data = {
+         let data = {
             name: this.state.name,
             price: this.state.price,
             id: id
@@ -112,7 +109,7 @@ class Product extends React.Component {
         });
         window.location.reload();
     }
-
+ //Delete event performed by Ajax call logic
     delete(id) {
         var that = this;
         //ajax call logic
@@ -152,18 +149,19 @@ class Product extends React.Component {
                 <Table.Row key={service.ID}>
                     <Table.Cell >{service.Name}</Table.Cell>
                     <Table.Cell >{"$ " + parseFloat(service.Price).toFixed(2)} </Table.Cell>
+  ////Edit Modal with Semantic UI
                     <Table.Cell >
-                        <Modal id="modal" trigger={<Button color="yellow"><Icon name="edit" />Edit</Button>}>
+                        <Modal id="modal" trigger={<Button color="yellow"><Icon name="edit" />Edit</Button>}>   
                             <Modal.Header >Details product</Modal.Header>
                             
                             <Modal.Content>
                                 <Form ref="form" method="POST" onSubmit={this.update.bind(this, service.ID)}>
                                     <Form.Field>
-                                        <label>Name</label><br />
+                                        <Label color="grey">Name</Label><br />
                                         <input type="text" name="name" required onChange={this.handleChange} defaultValue={service.Name} /><br />
                                     </Form.Field>
                                     <Form.Field>
-                                        <label>Price</label><br />
+                                        <Label color="grey">Price</Label><br />
                                         <input type="number" step="0.1" name="price" min="0" onChange={this.handleChange} required defaultValue={service.Price} /><br />
                                     </Form.Field>
                                     <Button type='submit'><Button color="green"><Icon name="save" />save</Button></Button>
@@ -171,6 +169,7 @@ class Product extends React.Component {
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
+// Delete Modal with Semantic UI
                     <Table.Cell>
                         <Modal id="deleteModal" onClose={this.props.onClose} trigger={<Button color="red" onClick={() => this.setState({ isHidden: true })}><Icon name="trash" />Delete</Button>}>
                             <Modal.Header>Delete product</Modal.Header>
@@ -184,6 +183,7 @@ class Product extends React.Component {
                 </Table.Row>
             );
         }
+  //Add Modal with Semantic UI
         return (
             <React.Fragment>
                 <div>
@@ -192,17 +192,18 @@ class Product extends React.Component {
                         <Modal.Content>
                             <Form onSubmit={this.add} ref="form" method="POST">
                                 <Form.Field>
-                                    <label>Name</label><br />
+                                    <Label color="grey">Name</Label><br />
                                     <input type="text" placeholder="Type a name for the product" name="name" required /><br />
                                 </Form.Field>
                                 <Form.Field>
-                                    <label>Price</label><br />
+                                    <Label color="grey">Price</Label><br />
                                     <input type="number" step="0.1" min="0" placeholder="Type an price" name="price" /><br />
                                 </Form.Field>
                                 <Button type='submit'><Button color="green"><Icon name="save" required />save</Button></Button>
                             </Form>
                         </Modal.Content>
                     </Modal>
+  //Table Details using Semantic UI
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
