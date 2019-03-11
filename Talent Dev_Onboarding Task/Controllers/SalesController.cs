@@ -38,7 +38,9 @@ namespace Talent_Dev_Onboarding_Task.Controllers
 
             }).ToList();
             return Json(salesModel, JsonRequestBehavior.AllowGet);
+
         }
+       
 
         // GET: ProductSolds/Create
         public ActionResult Create()

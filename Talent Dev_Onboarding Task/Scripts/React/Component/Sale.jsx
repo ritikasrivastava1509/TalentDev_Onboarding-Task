@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Modal,Icon, Popup, Form, Table, Label, Dropdown } from 'semantic-ui-react';
+import { Button, Modal, Icon, Popup, Form, Table, Label, Dropdown } from 'semantic-ui-react';
 import $ from 'jquery';
 import moment from 'moment';
 
@@ -14,7 +14,11 @@ class Sale extends React.Component {
             saleList: [],
             customersList: [],
             productsList: [],
-            storesList:[]
+            storesList: [],
+            DateSold: "",
+
+
+
         };
 
         this.loadData = this.loadData.bind(this);
@@ -27,6 +31,9 @@ class Sale extends React.Component {
         this.handleDate = this.handleDate.bind(this); // date
         this.handleChangeUpdate = this.handleChangeUpdate.bind(this); // for the update operation
         this.fillDropdown = this.fillDropdown.bind(this);
+        this.fillCustomerDropdown = this.fillCustomerDropdown.bind(this);
+        this.fillProductDropdown = this.fillProductDropdown.bind(this);
+        this.fillStoreDropdown = this.fillStoreDropdown.bind(this);
     }
 
 
@@ -43,16 +50,17 @@ class Sale extends React.Component {
         this.setState({
             curTime: day + '-' + month + '-' + year
         });
-        
+
+
         fetch('/Sales/GetSalesList').then(response => { // dropdowns
             response.json().then(data => {
-                
+
                 this.setState({
                     saleList: data,
                     serviceList: data,
-                    customersList: data[0].CustomerName,
-                    productsList: data[1].ProductName,
-                    storesList: data[2].StoreName
+                    customersList: data,
+                    productsList: data,
+                    storesList: data
                 });
             });
         });
@@ -71,7 +79,7 @@ class Sale extends React.Component {
             this.setState({
                 saleList: data
             });
-           
+
         });
     }
 
@@ -107,16 +115,18 @@ class Sale extends React.Component {
     }
 
     update(id) {
+       
+        
         //ajax call logic
         let convert = moment(this.state.newDate).format("DD-MM-YYYY") // by default was MM-DD-YYYY
 
         let data = {
-            customerID: this.state.selectCustomer[0].key,
-            productID: this.state.selectProduct[0].key,
-            storeID: this.state.selectStore[0].key,
+            customerID: this.state.selectUCustomer[0].key,
+            productID: this.state.selectUProduct[0].key,
+            storeID: this.state.selectUStore[0].key,
             dateSold: convert,
             id: id
-        }
+        };
 
         $.ajax({
             url: '/Sales/UpdateSaleRecord',
@@ -128,8 +138,9 @@ class Sale extends React.Component {
             console.log(data);
             this.setState({
                 serviceList: data
-            })
-        });
+            });
+            });
+        window.location.reload();
     }
 
     delete(id) {
@@ -158,13 +169,42 @@ class Sale extends React.Component {
 
     // Handle date
     handleDate(e) {
-        e.preventDefault();
-        this.setState({ [e.target.name]: e.target.value });
-    }
 
-    // dynamic list to fill up the dropdown 
+        e.preventDefault();
+        this.setState({ [e.target.value]: e.target.value });
+
+    }
+    /*dynamic list to fill up the dropdow*/
+    fillCustomerDropdown(list) {
+
+
+        let result = [];
+        for (var key in list) {
+            result.push({ key: list[key]["CustomerID"], text: list[key]["CustomerName"], value: list[key]["CustomerName"] });
+        }
+        return result;
+    }
+    fillProductDropdown(list) {
+
+
+        let result = [];
+        for (var key in list) {
+            result.push({ key: list[key]["ProductID"], text: list[key]["ProductName"], value: list[key]["ProductName"] });
+        }
+        return result;
+    }
+    fillStoreDropdown(list) {
+
+
+        let result = [];
+        for (var key in list) {
+            result.push({ key: list[key]["StoreID"], text: list[key]["StoreName"], value: list[key]["StoreName"] });
+        }
+        return result;
+    }
     fillDropdown(list) {
-       
+
+
         let result = [];
         for (var key in list) {
             result.push({ key: list[key]["ID"], value: list[key]["Name"] });
@@ -173,34 +213,34 @@ class Sale extends React.Component {
     }
 
     render() {
-        
+
         let saleList = this.state.saleList;
         let serviceList = this.state.serviceList;
         let tableData = null;
         let add_sale = null; // modal to add a sale
-        
+
         //alert(this.state.saleList);
         if (serviceList !== "") {
             const { name, value, key } = this.state; // set the value which would be selected into the dropdown
-            
+
             add_sale = <Modal id="modal" trigger={<Button color="blue" id="buttonModal">Add a new sale record</Button>}  >
                 <Modal.Header >Add a new sale</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={this.add.bind(this)} ref="form" method="POST">
                         <Form.Field>
-                            <label>Select customer</label><br />
-                            <Dropdown selection options={this.fillDropdown(this.state.customersList)} onChange={this.handleChange} name="selectCustomer" placeholder='Select Customer' /><br />
+                            <Label>Customer Name</Label><br />
+                            <Dropdown selection options={this.fillCustomerDropdown(this.state.customersList)} onChange={this.handleChange} name="selectCustomer" placeholder='Select Customer' /><br />
                         </Form.Field>
                         <Form.Field>
-                            <label>Product name</label><br />
-                            <Dropdown selection options={this.fillDropdown(this.state.productsList)} onChange={this.handleChange} name="selectProduct" placeholder='Select Product' /><br />
+                            <Label>Product Name</Label><br />
+                            <Dropdown selection options={this.fillProductDropdown(this.state.productsList)} onChange={this.handleChange} name="selectProduct" placeholder='Select Product' /><br />
                         </Form.Field>
                         <Form.Field>
-                            <label>Store name</label><br />
-                            <Dropdown selection options={this.fillDropdown(this.state.storesList)} onChange={this.handleChange} name="selectStore" placeholder='Select Store' /><br />
+                            <Label>Store Name</Label><br />
+                            <Dropdown selection options={this.fillStoreDropdown(this.state.storesList)} onChange={this.handleChange} name="selectStore" placeholder='Select Store' /><br />
                         </Form.Field>
                         <Form.Field>
-                            <label>Date</label><br />
+                            <Label>Date</Label><br />
                             <input type="date" onChange={this.handleDate} name="selectDate" min={this.state.curTime} required /><br />
                         </Form.Field>
                         <Button type='submit'><Icon name="save" />save</Button>
@@ -211,34 +251,33 @@ class Sale extends React.Component {
 
         // the table display all sale records
         if (this.state.saleList !== "") {
-           
+
             tableData = saleList.map(service =>
                 <Table.Row key={service.ID}>
                     <Table.Cell >{service.CustomerName}</Table.Cell>
-
                     <Table.Cell >{service.ProductName}</Table.Cell>
                     <Table.Cell >{service.StoreName}</Table.Cell>
-                    <Table.Cell >{moment(service.DateSold).format("DD/MM/YYYY")}</Table.Cell>
+                    <Table.Cell >{moment(service.DateSold).format("DD-MM-YYYY")}</Table.Cell>
                     <Table.Cell >
                         <Modal id="modal" trigger={<Button color="yellow"><Icon name="edit" />Edit</Button>}  >
                             <Modal.Header >Details sold</Modal.Header>
                             <Modal.Content>
                                 <Form ref="form" method="POST" onSubmit={this.update.bind(this, service.ID)}>
                                     <Form.Field>
-                                        <label>Customer name</label><br />
-                                        <Dropdown selection options={this.fillDropdown(this.state.customersList)} required onChange={this.handleChange} name="selectCustomer" defaultValue={service.CustomerName} /><br />
+                                        <Label>Customer Name</Label><br />
+                                        <Dropdown selection options={this.fillCustomerDropdown(this.state.customersList)} defaultValue={service.CustomerName} required onChange={this.handleChange} name="selectUCustomer"  /><br />
                                     </Form.Field>
                                     <Form.Field>
-                                        <label>Product name</label><br />
-                                        <Dropdown selection options={this.fillDropdown(this.state.productsList)}  required onChange={this.handleChange} name="selectProduct" defaultValue={service.ProductName} /><br />
+                                        <Label>Product Name</Label><br />
+                                        <Dropdown selection options={this.fillProductDropdown(this.state.productsList)} defaultValue={service.ProductName} required onChange={this.handleChange} name="selectUProduct"  /><br />
                                     </Form.Field>
                                     <Form.Field>
-                                        <label>Store name</label><br />
-                                        <Dropdown selection options={this.fillDropdown(this.state.storesList)}  required onChange={this.handleChange} name="selectStore" defaultValue={service.StoreName} /><br />
+                                        <Label>Store Name</Label><br />
+                                        <Dropdown selection options={this.fillStoreDropdown(this.state.storesList)} defaultValue={service.StoreName} required onChange={this.handleChange} name="selectUStore" /><br />
                                     </Form.Field>
                                     <Form.Field>
-                                        <label>Date sold</label><br />
-                                        <input type="date" name="newDate" onChange={this.handleDate} required /><br />
+                                        <label>Date Sold</label><br />
+                                        <input type="date" name="newDate" value={moment(service.DateSold).format("YYYY-MM-DD")} required onChange={this.handleDate} /><br />
                                     </Form.Field>
                                     <Button type='submit'><Icon name="save" />save</Button>
                                 </Form>
