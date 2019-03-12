@@ -136,7 +136,7 @@ fetch('/Customers/CreateCustomer', {
                 <Table.Row key={service.ID}>
                     <Table.Cell >{service.Name}</Table.Cell>
                     <Table.Cell >{service.Address}</Table.Cell>
-//Edit Modal using Semantic UI
+
                     <Table.Cell >
                         <Modal id="modal" trigger={<Button color="yellow" ><Icon name="edit" />Edit</Button>}  >
                             <Modal.Header class="uiHeader" >Details customer</Modal.Header>
@@ -155,7 +155,7 @@ fetch('/Customers/CreateCustomer', {
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
- //Delete Modal using Semantic UI
+ 
                     <Table.Cell>
                         <Modal id="deleteModal" onClose={this.props.onClose} trigger={<Button color="red" onClick={() => this.setState({ isHidden: true })}><Icon name="trash" />Delete</Button>}>
                             <Modal.Header>Delete Customer</Modal.Header>
@@ -169,7 +169,7 @@ fetch('/Customers/CreateCustomer', {
                 </Table.Row>
             );
         }
-// Add Modal using Semantic UI
+
         return (
             <React.Fragment>
                 <div>
@@ -191,7 +191,7 @@ fetch('/Customers/CreateCustomer', {
                             </Form>
                         </Modal.Content>
                     </Modal>
- //Table details Modal using Semantic UI
+ 
                     <Table celled>
                         <Table.Header>
                             <Table.Row>

@@ -149,7 +149,7 @@ loadData() {
                 <Table.Row key={service.ID}>
                     <Table.Cell >{service.Name}</Table.Cell>
                     <Table.Cell >{"$ " + parseFloat(service.Price).toFixed(2)} </Table.Cell>
-  ////Edit Modal with Semantic UI
+
                     <Table.Cell >
                         <Modal id="modal" trigger={<Button color="yellow"><Icon name="edit" />Edit</Button>}>   
                             <Modal.Header >Details product</Modal.Header>
@@ -169,7 +169,7 @@ loadData() {
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
-// Delete Modal with Semantic UI
+
                     <Table.Cell>
                         <Modal id="deleteModal" onClose={this.props.onClose} trigger={<Button color="red" onClick={() => this.setState({ isHidden: true })}><Icon name="trash" />Delete</Button>}>
                             <Modal.Header>Delete product</Modal.Header>
@@ -183,7 +183,7 @@ loadData() {
                 </Table.Row>
             );
         }
-  //Add Modal with Semantic UI
+  
         return (
             <React.Fragment>
                 <div>
@@ -203,7 +203,7 @@ loadData() {
                             </Form>
                         </Modal.Content>
                     </Modal>
-  //Table Details using Semantic UI
+  
                     <Table celled>
                         <Table.Header>
                             <Table.Row>

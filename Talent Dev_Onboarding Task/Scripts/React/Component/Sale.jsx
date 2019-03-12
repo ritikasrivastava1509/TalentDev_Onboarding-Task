@@ -214,7 +214,6 @@ class Sale extends React.Component {
         let add_sale = null;
  if (serviceList !== "") {
      const { name, value, key } = this.state; // set the value which would be selected into the dropdown
-// Add Modal using Semantic UI
 
             add_sale = <Modal id="modal" trigger={<Button color="blue" id="buttonModal">Add a new sale record</Button>}  >
                 <Modal.Header >Add a new sale</Modal.Header>
@@ -241,7 +240,7 @@ class Sale extends React.Component {
                 </Modal.Content>
             </Modal>
         }
- // Edit Modal using Semantic UI
+
         if (this.state.saleList !== "") {
 
             tableData = saleList.map(service =>
@@ -276,7 +275,6 @@ class Sale extends React.Component {
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
-//Delete Modal using Semantic UI
                     <Table.Cell>
                         <Modal id="deleteModal" onClose={this.props.onClose} trigger={<Button color="red" onClick={() => this.delete.bind(this, service.ID)}><Icon name="trash" />Delete</Button>}>
                             <Modal.Header>Delete Sales</Modal.Header>
@@ -289,7 +287,7 @@ class Sale extends React.Component {
                 </Table.Row>
             );
         }
- //Table to show All Sales Record using Semantic UI
+ 
         return (
             <React.Fragment>
                 <div>

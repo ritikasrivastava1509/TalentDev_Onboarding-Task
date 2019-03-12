@@ -25,7 +25,7 @@ class Store extends React.Component {
     }
 
     loadData() {
- // For binding all tha table details using Ajax call logic     
+ // For binding all tha table details using Ajax call logic   
         $.ajax({
             url: '/Stores/GetStoreList',
             dataType: 'json',
@@ -140,7 +140,7 @@ class Store extends React.Component {
                     <Table.Cell >{service.Name}</Table.Cell>
                     <Table.Cell >{service.Address}</Table.Cell>
                     <Table.Cell >
-   //Edit Modal using Semantic UI
+   
                         <Modal id="modal" trigger={<Button color="yellow" ><Icon name="edit" />Edit</Button>}  >
                             <Modal.Header >Details store</Modal.Header>
                             <Modal.Content>
@@ -158,7 +158,7 @@ class Store extends React.Component {
                             </Modal.Content>
                         </Modal>
                     </Table.Cell>
-  //Delete Modal using Sematic UI
+  
                     <Table.Cell>
                         <Modal id="deleteModal" onClose={this.props.onClose} trigger={<Button color="red" onClick={() => this.setState({ isHidden: true })}><Icon name="trash" />Delete</Button>}>
                             <Modal.Header>Delete Store</Modal.Header>
@@ -172,7 +172,7 @@ class Store extends React.Component {
                 </Table.Row>
             );
      }
-  //Add Modal
+  
         return (
             <React.Fragment>
                 <div>
@@ -192,7 +192,7 @@ class Store extends React.Component {
                             </Form>
                         </Modal.Content>
                     </Modal>
-    //Table Detalis
+   
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
